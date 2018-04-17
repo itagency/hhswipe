@@ -23,8 +23,8 @@ const CardDetails = styled.div`
   bottom: 0;
   left: 0;
   right: 0;
-  height: 35%;
-  padding: 10px 10px 0;
+  height: auto;
+  padding: 10px;
   background: -moz-linear-gradient(top, rgba(125,185,232,0) 0%, rgba(0,0,0,0.6) 100%); /* FF3.6-15 */
   background: -webkit-linear-gradient(top, rgba(125,185,232,0) 0%,rgba(0,0,0,0.6) 100%); /* Chrome10-25,Safari5.1-6 */
   background: linear-gradient(to bottom, rgba(125,185,232,0) 0%,rgba(0,0,0,0.6) 100%); /* W3C, IE10+, FF16+, Chrome26+, Opera12+, Safari7+ */
@@ -47,6 +47,14 @@ const CardDetails = styled.div`
     }
     h1 {
       margin-top: 20px;
+    }
+  }
+  @media screen and (max-width: 400px) {
+    h1 {
+      font-size: 20px;
+    }
+    p {
+      font-size: 14px;
     }
   }
 `;
@@ -94,7 +102,7 @@ const CardImage = styled.div`
   background-image: url(${(props) => props.fullImage});
   background-position: center center;
   background-repeat: no-repeat;
-  background-size: cover;
+  background-size: contain;
 `;
 
 const CloseExpand = styled.div`

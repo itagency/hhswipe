@@ -8,8 +8,8 @@ import ProductCard from '../ProductCard';
 import { Direction } from 'swing';
 import fire from '../../data/fire';
 import shuffle from '../../utils/shuffle';
-import thumbsDown from './thumbs-down.svg';
-import thumbsUp from './thumbs-up.svg';
+import nopeImage from './nope.png';
+import yepImage from './yup.png';
 
 const ProductsWrapper = styled.div`
   position: relative;
@@ -38,7 +38,7 @@ const Button = styled.div`
   background: white;
   > img {
     width: 25px;
-    height: 25px;
+    /* height: 25px; */
     margin: 20px;
   }
 `;
@@ -55,6 +55,7 @@ const ThankYou = styled.div`
   opacity: 0;
   transition: all .3s ease-in-out;
   z-index: -1;
+  font-size: 14px;
   &.active {
     top: 0;
     opacity: 1;
@@ -70,7 +71,9 @@ const DislikeButton = Button.extend`
 `;
 
 const LikeButton = Button.extend`
-  fill: green;
+  > img {
+    margin-top: 23px;
+  }
 `;
 
 class Products extends React.Component { // eslint-disable-line react/prefer-stateless-function
@@ -239,10 +242,10 @@ class Products extends React.Component { // eslint-disable-line react/prefer-sta
         {!this.state.showThankYou && (
           <ButtonWrapper>
             <DislikeButton onClick={(e) => this.handleThrow(e, 'left')}>
-              <img src={thumbsDown} alt=""/>
+              <img src={nopeImage} alt=""/>
             </DislikeButton>
             <LikeButton onClick={(e) => this.handleThrow(e, 'right')}>
-              <img src={thumbsUp} alt=""/>
+              <img src={yepImage} alt=""/>
             </LikeButton>
           </ButtonWrapper>
         )}
