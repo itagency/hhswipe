@@ -5,7 +5,7 @@ import { truncateTitle, truncateDescription } from '../../utils/truncate';
 
 const Card = styled.div`
   /* border: 1px solid #ccc; */
-  box-shadow: ${(props) => props.isExpanded ? 'none' : '0 3px 20px rgba(0,0,0,.2)'};
+  box-shadow: ${(props) => props.isExpanded || !props.active ? 'none' : '0 3px 20px rgba(0,0,0,.2)'};
   position: absolute;
   top: ${(props) => props.isExpanded ? 0 : '3%'};
   right: ${(props) => props.isExpanded ? 0 : '5%'};
@@ -16,6 +16,7 @@ const Card = styled.div`
   opacity: ${(props) => props.opacity};
   z-index: 10;
   overflow: hidden;
+  transition: box-shadow .3s ease-in-out;
 `;
 
 const CardDetails = styled.div`
@@ -146,7 +147,7 @@ class ProductCard extends React.Component { // eslint-disable-line react/prefer-
   render() {
     const { title, imageUrl, description, linkUrl, linkText, active, isNope, isYep } = this.props;
     return (
-      <Card onClick={(e) => this.expandCard(e)} isExpanded={this.state.expanded}>
+      <Card onClick={(e) => this.expandCard(e)} isExpanded={this.state.expanded} active={active}>
         {this.state.expanded && <CloseExpand onClick={(e) => this.closeExpand()}>Close</CloseExpand>}
         {active && <Yep show={isYep}>Yep</Yep>}
         {active && <Nope show={isNope}>Nope</Nope>}
