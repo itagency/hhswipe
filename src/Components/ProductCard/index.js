@@ -1,5 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import ReactMarkdown from 'react-markdown';
 import styled from 'styled-components';
 import { truncateTitle, truncateDescription } from '../../utils/truncate';
 
@@ -146,6 +147,7 @@ class ProductCard extends React.Component { // eslint-disable-line react/prefer-
   // import data to this component
   render() {
     const { title, imageUrl, description, linkUrl, linkText, active, isNope, isYep } = this.props;
+    const desc = !this.state.expanded ? truncateDescription(description) : description;
     return (
       <Card onClick={(e) => this.expandCard(e)} isExpanded={this.state.expanded} active={active}>
         {this.state.expanded && <CloseExpand onClick={(e) => this.closeExpand()}>Close</CloseExpand>}
@@ -154,7 +156,7 @@ class ProductCard extends React.Component { // eslint-disable-line react/prefer-
         <CardImage fullImage={imageUrl} />
         <CardDetails className={this.state.expanded ? 'expanded' : ''}>
           <h1>{!this.state.expanded ? truncateTitle(title) : title}</h1>
-          <p>{!this.state.expanded ? truncateDescription(description) : description}</p>
+          <ReactMarkdown source={desc} />
           {(this.state.expanded && linkUrl && linkText) && <a href={linkUrl}>{linkText}</a>}
         </CardDetails>
       </Card>
