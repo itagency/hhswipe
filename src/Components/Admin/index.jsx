@@ -114,7 +114,7 @@ class Admin extends Component {
     console.log(this.props.fireData);
     return (
       <div className="App">
-        <div style={{height: '100%'}}>
+        <div style={{height: '100%', overflow: 'scroll'}}>
           <h1>Admin</h1>
           <h2>NOTE: Refresh to update</h2>
           <h3>Stats</h3>
@@ -145,7 +145,7 @@ class Admin extends Component {
           {this.state.imageUrl && (
             <div>
               <input type="text" placeholder="Title" name="title" onChange={this.handleInputChange} />
-              <textarea placeholder="Description" name="description" onChange={this.handleInputChange} />
+              <textarea cols="100" rows="30" placeholder="Description" name="description" onChange={this.handleInputChange} />
               <input type="text" placeholder="Link Text" name="linkText" onChange={this.handleInputChange} />
               <input type="text" placeholder="Link URL" name="linkUrl" onChange={this.handleInputChange} />
               <p>Title: {this.state.title}</p>

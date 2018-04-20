@@ -8,7 +8,7 @@ const Card = styled.div`
   /* border: 1px solid #ccc; */
   box-shadow: ${(props) => props.isExpanded || !props.active ? 'none' : '0 3px 20px rgba(0,0,0,.2)'};
   position: absolute;
-  top: ${(props) => props.isExpanded ? 0 : '3%'};
+  top: ${(props) => props.isExpanded ? '-20%' : '3%'};
   right: ${(props) => props.isExpanded ? 0 : '5%'};
   bottom: ${(props) => props.isExpanded ? 0 : '3%'};
   left: ${(props) => props.isExpanded ? 0 : '5%'};
@@ -17,7 +17,7 @@ const Card = styled.div`
   opacity: ${(props) => props.opacity};
   z-index: 10;
   overflow: hidden;
-  transition: box-shadow .3s ease-in-out;
+  transition: box-shadow .3s ease-in-out, top .3s ease-in-out;
 `;
 
 const CardDetails = styled.div`
@@ -26,13 +26,13 @@ const CardDetails = styled.div`
   left: 0;
   right: 0;
   height: auto;
-  padding: 10px;
+  padding: 10px 20px;
   background: -moz-linear-gradient(top, rgba(125,185,232,0) 0%, rgba(0,0,0,0.6) 100%); /* FF3.6-15 */
   background: -webkit-linear-gradient(top, rgba(125,185,232,0) 0%,rgba(0,0,0,0.6) 100%); /* Chrome10-25,Safari5.1-6 */
   background: linear-gradient(to bottom, rgba(125,185,232,0) 0%,rgba(0,0,0,0.6) 100%); /* W3C, IE10+, FF16+, Chrome26+, Opera12+, Safari7+ */
   overflow: hidden;
   transition: all .2s ease-in-out;
-  h1, p {
+  h1, p, h3, li {
     color: white;
   }
   h1 {
@@ -40,12 +40,29 @@ const CardDetails = styled.div`
     font-size: 24px;
     font-weight: 500;
   }
+  p, li, h3 {
+    font-size: 16px;
+    line-height: 1.4em;
+  }
   &.expanded {
     background: white;
     overflow: scroll;
     height: 50%;
-    h1, p {
+    h1, p, h3, li {
       color: black;
+      font-size: 14px;
+    }
+    p, li {
+      line-height: 1.4em;
+    }
+    h3 {
+      font-size: 18px;
+    }
+    ul {
+      padding-left: 17px;
+      li {
+        margin-bottom: 4px;
+      }
     }
     h1 {
       margin-top: 20px;
@@ -55,7 +72,7 @@ const CardDetails = styled.div`
     h1 {
       font-size: 20px;
     }
-    p {
+    p, li, h3 {
       font-size: 14px;
     }
   }
@@ -108,14 +125,7 @@ const CardImage = styled.div`
 `;
 
 const CloseExpand = styled.div`
-  position: absolute;
-  z-index: 11;
-  top: 10px;
-  right: 10px;
-  color: black;
-  font-size: 16px;
-  font-weight: bold;
-  text-transform: uppercase;
+  
 `;
 
 class ProductCard extends React.Component { // eslint-disable-line react/prefer-stateless-function
@@ -130,34 +140,22 @@ class ProductCard extends React.Component { // eslint-disable-line react/prefer-
   }
 
   expandCard() {
-    if (!this.state.expanded) {
-      this.setState({
-        expanded: true
-      });
-    }
-  }
-
-  closeExpand() {
-    this.setState({
-      expanded: false
-    });
+    this.props.expandCb();
   }
   // basic styling of cards
   // build 3 items in firebase
   // import data to this component
   render() {
-    const { title, imageUrl, description, linkUrl, linkText, active, isNope, isYep } = this.props;
+    const { title, imageUrl, description, linkUrl, linkText, active, isNope, isYep, expanded } = this.props;
     const desc = !this.state.expanded ? truncateDescription(description) : description;
     return (
-      <Card onClick={(e) => this.expandCard(e)} isExpanded={this.state.expanded} active={active}>
-        {this.state.expanded && <CloseExpand onClick={(e) => this.closeExpand()}>Close</CloseExpand>}
+      <Card onClick={(e) => this.expandCard(e)} isExpanded={this.props.expanded} active={active}>
         {active && <Yep show={isYep}>Yep</Yep>}
         {active && <Nope show={isNope}>Nope</Nope>}
         <CardImage fullImage={imageUrl} />
-        <CardDetails className={this.state.expanded ? 'expanded' : ''}>
-          <h1>{!this.state.expanded ? truncateTitle(title) : title}</h1>
-          <ReactMarkdown source={desc} />
-          {(this.state.expanded && linkUrl && linkText) && <a href={linkUrl}>{linkText}</a>}
+        <CardDetails>
+          <h1>{truncateTitle(title)}</h1>
+          <ReactMarkdown source={truncateDescription(desc)} />
         </CardDetails>
       </Card>
     );

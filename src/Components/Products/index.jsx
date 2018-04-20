@@ -3,6 +3,7 @@ import ReactDOM from 'react-dom';
 import PropTypes from 'prop-types';
 import Swing from 'react-swing';
 import styled from 'styled-components';
+import ReactMarkdown from 'react-markdown';
 import ls from 'local-storage';
 import ProductCard from '../ProductCard';
 import { Direction } from 'swing';
@@ -27,6 +28,7 @@ const ButtonWrapper = styled.div`
   right: 0;
   height: 80px;
   display: flex;
+  z-index: 12;
   justify-content: space-around;
 `;
 
@@ -76,6 +78,65 @@ const LikeButton = Button.extend`
   }
 `;
 
+const ExpandedSection = styled.div`
+  position: absolute;
+  z-index: 11;
+  height: 100%;
+  top: ${(props) => props.isExpanded ? '0' : 'calc(100% + 80px)'};
+  left: 0;
+  right: 0;
+  transition: all .5s ease-in-out;
+  > .close {
+    position: absolute;
+    z-index: 11;
+    top: 10px;
+    right: 12px;
+    color: black;
+    font-size: 16px;
+    font-weight: bold;
+    text-transform: uppercase;
+    opacity: ${(props) => props.isExpanded ? '1' : '0'};
+    transition: ${(props) => props.isExpanded ? 'all .3s ease-in-out': 'all .4s ease-in-out'};
+  }
+  > .content {
+    height: 55%;
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    overflow: scroll;
+    background: white;
+    padding: 10px 20px;
+    color: black;
+    h1 {
+      font-size: 20px;
+    }
+    p, li {
+      line-height: 1.4em;
+    }
+    h3 {
+      font-size: 18px;
+    }
+    ul {
+      padding-left: 17px;
+      li {
+        margin-bottom: 4px;
+      }
+    }
+    h1 {
+      margin-top: 20px;
+    }
+    @media screen and (max-width: 400px) {
+      h1, h3 {
+        font-size: 20px;
+      }
+      p, li, h3 {
+        font-size: 14px;
+      }
+    }
+  }
+`
+
 class Products extends React.Component { // eslint-disable-line react/prefer-stateless-function
   constructor(props) {
     super(props);
@@ -83,7 +144,9 @@ class Products extends React.Component { // eslint-disable-line react/prefer-sta
     this.state = {
       stack: null,
       cards: [],
-      showThankYou: false
+      showThankYou: false,
+      expandedCardDetails: {},
+      showExpanded: false
     };
 
     this.removeCard = this.removeCard.bind(this);
@@ -91,6 +154,8 @@ class Products extends React.Component { // eslint-disable-line react/prefer-sta
     this.handleThrowoutLeft = this.handleThrowoutLeft.bind(this);
     this.handleDragMove = this.handleDragMove.bind(this);
     this.handleThrow = this.handleThrow.bind(this);
+    this.cardExpanded = this.cardExpanded.bind(this);
+    this.closeExpanded = this.closeExpanded.bind(this);
   }
 
   removeCard(e, index, id) {
@@ -111,6 +176,19 @@ class Products extends React.Component { // eslint-disable-line react/prefer-sta
     hh_voted.push(id);
     
     ls.set('hh_voted', hh_voted);
+  }
+
+  cardExpanded(i) {
+    this.setState({
+      expandedCardDetails: this.state.cards[i],
+      showExpanded: true
+    })
+  }
+
+  closeExpanded() {
+    this.setState({
+      showExpanded: false
+    })
   }
 
   handleThrowoutRight(e, id) {
@@ -158,9 +236,9 @@ class Products extends React.Component { // eslint-disable-line react/prefer-sta
         } else {
           card.active = false;
         }
-        // if (hh_local_string.indexOf(card.id) === -1) {
-        localData.push(card);
-        // }
+        if (hh_local_string.indexOf(card.id) === -1) {
+          localData.push(card);
+        }
       });
 
       this.setState({
@@ -204,6 +282,7 @@ class Products extends React.Component { // eslint-disable-line react/prefer-sta
     } else {
       this.handleThrowoutRight(e, target.props.id);
     }
+    this.closeExpanded();
     card.throwOut(0, 100, Swing.DIRECTION[direction.toUpperCase()]);
   }
   render() {
@@ -235,10 +314,19 @@ class Products extends React.Component { // eslint-disable-line react/prefer-sta
               dragend={(e) => this.handleDragEnd(e)}
               isNope={this.state.showNope}
               isYep={this.state.showYep}
+              expandCb={() => this.cardExpanded(index)}
+              expanded={this.state.showExpanded}
               {...card}
             />
           ))}
         </Swing>
+        <ExpandedSection isExpanded={this.state.showExpanded}>
+          <div className="close" onClick={() => this.closeExpanded()}>Close</div>
+          <div className="content">
+            <h1>{this.state.expandedCardDetails.title}</h1>
+            <ReactMarkdown source={this.state.expandedCardDetails.description} />
+          </div>
+        </ExpandedSection>
         {!this.state.showThankYou && (
           <ButtonWrapper>
             <DislikeButton onClick={(e) => this.handleThrow(e, 'left')}>
